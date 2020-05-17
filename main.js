@@ -2,7 +2,7 @@
 * @Author: amitshah
 * @Date:   2020-05-17 05:11:37
 * @Last Modified by:   amitshah
-* @Last Modified time: 2020-05-17 06:02:03
+* @Last Modified time: 2020-05-17 06:12:20
 */
 
 
@@ -161,6 +161,21 @@ p1 = S2.phase1();
 
 Bob = new Bob();
 
+p2 = Bob.phase2(p1, "geohash2");
+
+p3 = S1.phase3(p2);
+
+//G^yr1
+rActual = S2.phase4(p3)
+
+rExpected = S1.keyPair.getPublic().mul(Bob.keyPair.getPrivate())
+
+console.log(rActual.getX().toString(16));
+console.log(rExpected.getX().toString(16));
+console.log(rActual.getY().toString(16));
+console.log(rExpected.getY().toString(16));
+
+
 p2 = Bob.phase2(p1, "geohash");
 
 p3 = S1.phase3(p2);
@@ -168,16 +183,12 @@ p3 = S1.phase3(p2);
 //G^yr1
 rActual = S2.phase4(p3)
 
-
-
 rExpected = S1.keyPair.getPublic().mul(Bob.keyPair.getPrivate())
 
 console.log(rActual.getX().toString(16));
 console.log(rExpected.getX().toString(16));
-
 console.log(rActual.getY().toString(16));
 console.log(rExpected.getY().toString(16));
-
 
 
 
