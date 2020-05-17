@@ -1,0 +1,15 @@
+{
+  "name": "2server-psi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Amit Shah",
+  "license": "MIT",
+  "dependencies": {
+    "bn.js": "^5.1.1",
+    "elliptic": "^6.5.2"
+  }
+}
