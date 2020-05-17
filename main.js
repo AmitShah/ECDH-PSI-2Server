@@ -2,7 +2,7 @@
 * @Author: amitshah
 * @Date:   2020-05-17 05:11:37
 * @Last Modified by:   amitshah
-* @Last Modified time: 2020-05-17 06:12:20
+* @Last Modified time: 2020-05-17 19:15:39
 */
 
 
@@ -99,6 +99,13 @@ class Bob{
 		//G^x*r2*H(bob)+y
 		return p1.mul(h).add(this.keyPair.getPublic())
 	}
+
+	phase4(p3,pn,serverPk){
+		var actual = p3.add(pn.neg());
+		var expectedPk = serverPk.mul(this.keyPair.getPrivate());
+		return actual.getX().toString(16) === expectedPk.getX().toString(16) && 
+		actual.getY().toString(16) === expectedPk.getY().toString(16) 
+	}
 }
 
 class Server{
@@ -118,21 +125,20 @@ class Server{
 		//G^(x*r2*H(bob)+y)*r1
 		return p2.mul(this.keyPair.getPrivate());
 	}
-}
-
-class Server2 extends Server{
-
-
-
 	setAliceData(c1,c2){
 		//c1 = G^x
 		//c2 = //G^r1*r2*x*H(alice)
 		this.data = [c1,c2];
 	}
+}
+
+class Server2 extends Server{
+
+	
 
 	phase1(){
 		//G^x*r2
-		return this.data[0].mul(this.keyPair.getPrivate());
+		return [this.data[0].mul(this.keyPair.getPrivate()),this.data[1]];
 	}
 
 	phase4(p3){
@@ -152,18 +158,29 @@ S2 = new Server2();
 
 
 
+//Offline Mode
+
 Alice = new Alice();
 Alice.compareAndSetServerKey([S2.getSharedPublicKey(S1.getPublic()),S1.getSharedPublicKey(S2.getPublic())]);
 let [c1,c2] = Alice.encodeData("geohash");
 
 S2.setAliceData(c1,c2);
-p1 = S2.phase1();
+S1.setAliceData(c1,c2);
 
+//Bob requests data from Server
 Bob = new Bob();
+let [p1,p4] = S2.phase1();
 
 p2 = Bob.phase2(p1, "geohash2");
 
 p3 = S1.phase3(p2);
+
+if(!Bob.phase4(p3,p4,S1.keyPair.getPublic())){
+ console.log("invalid");
+}else{
+	 console.log("valid");
+}
+
 
 //G^yr1
 rActual = S2.phase4(p3)
@@ -180,6 +197,11 @@ p2 = Bob.phase2(p1, "geohash");
 
 p3 = S1.phase3(p2);
 
+if(!Bob.phase4(p3,p4,S1.keyPair.getPublic())){
+ console.log("invalid");
+}else{
+	 console.log("valid");
+}
 //G^yr1
 rActual = S2.phase4(p3)
 
